@@ -2,6 +2,8 @@ FROM ruby:2.5-slim
 
 ENV RAILS_ENV production
 
+COPY . /var/www
+
 # Install build dependencies
 RUN set -ex &&\
   apt-get update &&\
@@ -51,47 +53,51 @@ RUN set -ex &&\
   imagemagick \
   ca-certificates \
   rsync &&\
-# Remove build dependencies, clean up APT and temp files
-  apt-get clean &&\
-  apt-get remove --purge -y wget curl &&\
-  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* &&\
 # Add 'web' user which will run the application
-  adduser web --home /home/web --shell /bin/bash --disabled-password --gecos ""
-
-COPY Gemfile* /var/www/
-RUN \
-  mkdir -p /var/www/docker &&\
-  echo "export PATH=\"\$PATH:/opt/rubies/ruby-$BUILD_RUBY_VERSION/bin\"" > /var/www/docker/ruby-path.sh &&\
-  chmod +x /var/www/docker/ruby-path.sh &&\
-  mkdir -p /var/bundle &&\
-  chown -R web:web /var/bundle &&\
-  chown -R web:web /var/www &&\
-  mkdir -p /data/public &&\
-  chown -R web:web /data
-
-USER web
-
-RUN cd /var/www &&\
-  . /var/www/docker/ruby-path.sh &&\
-  bundle install --path /var/bundle --deployment --without development test deploy
-
-# Add application source
-USER root
-COPY . /var/www
-RUN cd /var/www/ &&\
+  adduser web --home /home/web --shell /bin/bash --disabled-password --gecos "" &&\
+# Init application dirs
+  mkdir -p /var/bundle /var/www /var/www/docker /data/public &&\
+  chown -R web:web /var/bundle /var/www /data &&\
+# Install gems, precompile assets
+  cd /var/www/ &&\
   find /var/www/docker -type f -name "*.sh" -print0 | xargs -0 chmod +x &&\
-  chown -R web:web /var/www
-
-# Precompile assets and cleanup
-USER web
-RUN cd /var/www &&\
-  . /var/www/docker/ruby-path.sh &&\
-  . /var/www/.env.docker-build &&\
-  bundle exec rake assets:precompile &&\
-  rm -rf /var/www/tmp/* /var/www/log/*
+  chown -R web:web /var/www &&\
+  cd /var/www/ &&\
+  su-exec web bundle install --path /var/bundle --deployment --without development test deploy &&\
+  su web -c 'cd /var/www && . /var/www/.env.docker-build && bundle exec rake assets:precompile' &&\
+  rm -rf /var/www/tmp/* /var/www/log/* /home/web/.bundle/cache &&\
+# Cleanup
+  apt-get clean &&\
+  apt-get remove --purge -y \
+  apt-transport-https \
+  wget \
+  curl \
+  build-essential \
+  libcurl4-openssl-dev \
+  python-dev \
+  python-setuptools \
+  software-properties-common \
+  gnupg \
+  python-pip \
+  git \
+#  libpq-dev \
+  postgresql-client-9.6 \
+  libreadline-dev \
+  zlib1g-dev \
+  flex \
+  bison \
+  libxml2-dev \
+  libxslt1-dev \
+#  libssl-dev \
+#  ca-certificates \
+  rsync &&\
+  apt-get -y autoremove &&\
+  rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/fonts \
+  /usr/share/doc/* /etc/fonts /root/.cache /usr/share/fontconfig \
+  /usr/share/icons /usr/share/man
 
 USER root
-ENTRYPOINT ["/var/www/docker/docker-entrypoint.sh"]
+ENTRYPOINT ["/var/www/docker/entrypoint.sh"]
 
 VOLUME /var/www
 
