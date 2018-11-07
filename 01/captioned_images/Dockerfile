@@ -1,7 +1,6 @@
-FROM bitnami/minideb:latest
+FROM ruby:2.5-slim
 
 ENV RAILS_ENV production
-ENV BUILD_RUBY_VERSION 2.5.3
 
 # Install build dependencies
 RUN set -ex &&\
@@ -19,7 +18,6 @@ RUN set -ex &&\
   python-pip \
   git \
   file \
-  libjemalloc-dev \
   brotli &&\
 # Python libs
   pip install python-magic &&\
@@ -33,16 +31,6 @@ RUN set -ex &&\
   apt-get update &&\
 # Install Node
   apt-get install -y --no-install-recommends nodejs &&\
-# Install ruby-install
-  cd /tmp &&\
-  wget -O ruby-install-0.6.1.tar.gz https://github.com/postmodern/ruby-install/archive/v0.6.1.tar.gz &&\
-  tar -xzvf ruby-install-0.6.1.tar.gz &&\
-  cd ruby-install-0.6.1/ &&\
-  make install &&\
-# Install Ruby with jemalloc
-  ruby-install ruby $BUILD_RUBY_VERSION -- --with-jemalloc &&\
-# Install bundler globally
-  PATH=/opt/rubies/ruby-$BUILD_RUBY_VERSION/bin:$PATH gem install bundler &&\
 # Install su-exec
   cd /tmp &&\
   wget -O su-exec-0.2.tar.gz https://github.com/ncopa/su-exec/archive/v0.2.tar.gz &&\
