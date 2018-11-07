@@ -26,11 +26,6 @@ RUN set -ex &&\
 # Yarn
   curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - &&\
   echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list &&\
-# Update apt cache with PPAs
-  apt-get clean &&\
-  apt-get update &&\
-# Install Node
-  apt-get install -y --no-install-recommends nodejs &&\
 # Install su-exec
   cd /tmp &&\
   wget -O su-exec-0.2.tar.gz https://github.com/ncopa/su-exec/archive/v0.2.tar.gz &&\
@@ -38,8 +33,11 @@ RUN set -ex &&\
   cd su-exec-0.2/ &&\
   make &&\
   cp -a su-exec /usr/bin/ &&\
-# Install Ruby application dependencies
+# Update apt cache with PPAs and install Node and Ruby app dependencies
+  apt-get clean &&\
+  apt-get update &&\
   apt-get install -y --no-install-recommends \
+  nodejs \
   yarn \
   libpq-dev \
   postgresql-client-9.6 \
