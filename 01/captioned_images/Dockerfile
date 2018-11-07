@@ -72,7 +72,7 @@ RUN set -ex &&\
   apt-transport-https \
   wget \
   curl \
-  build-essential \
+#  build-essential \
   libcurl4-openssl-dev \
   python-dev \
   python-setuptools \
@@ -81,7 +81,7 @@ RUN set -ex &&\
   python-pip \
   git \
 #  libpq-dev \
-  postgresql-client-9.6 \
+#  postgresql-client-9.6 \
   libreadline-dev \
   zlib1g-dev \
   flex \
