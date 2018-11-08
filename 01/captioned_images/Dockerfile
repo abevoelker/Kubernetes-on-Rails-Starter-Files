@@ -72,7 +72,6 @@ RUN set -ex &&\
   apt-transport-https \
   wget \
   curl \
-#  build-essential \
   libcurl4-openssl-dev \
   python-dev \
   python-setuptools \
@@ -80,27 +79,19 @@ RUN set -ex &&\
   gnupg \
   python-pip \
   git \
-#  libpq-dev \
-#  postgresql-client-9.6 \
   libreadline-dev \
   zlib1g-dev \
   flex \
   bison \
   libxml2-dev \
   libxslt1-dev \
-#  libssl-dev \
-#  ca-certificates \
   rsync &&\
   apt-get -y autoremove &&\
   rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/fonts \
   /usr/share/doc/* /etc/fonts /root/.cache /usr/share/fontconfig \
   /usr/share/icons /usr/share/man
 
-USER root
 ENTRYPOINT ["/var/www/docker/entrypoint.sh"]
-
 VOLUME /var/www
-
 WORKDIR /var/www
-
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
