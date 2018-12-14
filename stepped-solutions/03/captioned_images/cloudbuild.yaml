@@ -1,0 +1,12 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+      docker pull gcr.io/$PROJECT_ID/captioned_images:latest || true
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--cache-from', 'gcr.io/$PROJECT_ID/captioned_images:latest', '-t', 'gcr.io/$PROJECT_ID/captioned_images:latest', '.' ]
+images:
+- 'gcr.io/$PROJECT_ID/captioned_images:latest'
+timeout: 3600s
