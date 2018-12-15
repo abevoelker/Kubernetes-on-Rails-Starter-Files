@@ -36,3 +36,12 @@ spec:
                 key: SECRET_KEY_BASE
           - name: RAILS_SERVE_STATIC_FILES
             value: "true"
+          - name: GOOGLE_CLOUD_KEYFILE_JSON
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: GOOGLE_CLOUD_KEYFILE_JSON
+          - name: GOOGLE_CLOUD_PROJECT
+            value: crafty-shelter-224719
+          - name: GCS_BUCKET
+            value: crafty-shelter-224719
