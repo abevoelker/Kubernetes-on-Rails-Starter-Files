@@ -1,0 +1,18 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  url: <%= ENV['DATABASE_URL'] %>
+  variables:
+    timezone: "Etc/UTC"
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+  variables:
+    timezone: "Etc/UTC"
+    statement_timeout: 5000
