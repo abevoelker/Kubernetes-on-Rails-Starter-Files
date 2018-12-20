@@ -1,0 +1,49 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      run: webapp
+  template:
+    metadata:
+      labels:
+        run: webapp
+    spec:
+      containers:
+        - name: webapp
+          image: gcr.io/crafty-shelter-224719/captioned_images:latest
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 3000
+          env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: DATABASE_URL
+          - name: SECRET_KEY_BASE
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: SECRET_KEY_BASE
+          - name: RAILS_SERVE_STATIC_FILES
+            value: "true"
+          - name: GOOGLE_CLOUD_KEYFILE_JSON
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: GOOGLE_CLOUD_KEYFILE_JSON
+          - name: GOOGLE_CLOUD_PROJECT
+            value: crafty-shelter-224719
+          - name: GCS_BUCKET
+            value: crafty-shelter-224719
+          - name: CDN_HOST
+            value: crafty-shelter-224719-assets.duckdns.org
