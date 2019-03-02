@@ -21,6 +21,9 @@ RUN set -ex &&\
   git \
   file \
   brotli &&\
+# Fix brokenness in Debian slim image
+# https://github.com/debuerreotype/debuerreotype/issues/10
+  for i in $(seq 1 8); do mkdir -p "/usr/share/man/man${i}"; done &&\
 # Python libs
   pip install python-magic &&\
 # Node 10.x
@@ -47,6 +50,7 @@ RUN set -ex &&\
   zlib1g-dev \
   flex \
   bison \
+  libgmp3-dev \
   libxml2-dev \
   libxslt1-dev \
   libssl-dev \
