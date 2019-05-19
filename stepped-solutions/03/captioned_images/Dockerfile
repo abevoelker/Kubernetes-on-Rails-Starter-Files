@@ -1,4 +1,4 @@
-FROM ruby:2.5-slim
+FROM ruby:2.5.5-slim
 
 ENV RAILS_ENV production
 
