@@ -1,0 +1,29 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      run: webapp
+  template:
+    metadata:
+      labels:
+        run: webapp
+    spec:
+      containers:
+        - name: webapp
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          {{- with .Values.deploy.ports }}
+          ports:
+            {{- toYaml . | trim | nindent 12 }}
+          {{- end }}
+          env:
+            {{- include "captioned-images.env" . | trim | nindent 12 }}

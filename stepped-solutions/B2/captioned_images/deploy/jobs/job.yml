@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+spec:
+  completions: 1
+  template:
+    metadata:
+      name: db-migrate
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: db-migrate
+        image: gcr.io/erudite-tome-241418/captioned_images:latest
+        args: ["bundle", "exec", "rake", "db:create", "db:migrate"]
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: DATABASE_URL
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: SECRET_KEY_BASE

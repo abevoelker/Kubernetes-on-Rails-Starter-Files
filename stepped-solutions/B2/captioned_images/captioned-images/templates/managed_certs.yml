@@ -1,0 +1,15 @@
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: website-cert
+spec:
+  domains:
+    - {{ .Values.ingress.hosts.website }}
+---
+apiVersion: networking.gke.io/v1beta1
+kind: ManagedCertificate
+metadata:
+  name: assets-cert
+spec:
+  domains:
+    - {{ .Values.ingress.hosts.assets }}

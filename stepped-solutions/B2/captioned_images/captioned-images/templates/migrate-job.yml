@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migrate
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  completions: 1
+  template:
+    metadata:
+      name: db-migrate
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: db-migrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        args: ["bundle", "exec", "rake", "db:create", "db:migrate"]
+        env:
+          {{- include "captioned-images.env" . | trim | nindent 10 }}

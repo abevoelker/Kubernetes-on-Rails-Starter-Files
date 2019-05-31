@@ -1,0 +1,42 @@
+# Default values for captioned-images.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: gcr.io/quixotic-tesla-241816/captioned_images
+  tag: latest
+  pullPolicy: Always
+
+deploy:
+  ports:
+    - containerPort: 3000
+  env:
+    literals:
+      RAILS_SERVE_STATIC_FILES: "true"
+      RAILS_LOG_TO_STDOUT: "true"
+      GOOGLE_CLOUD_PROJECT: "quixotic-tesla-241816"
+      GCS_BUCKET: "image-store-f95fb1d5"
+      CDN_HOST: "quixotic-tesla-241816-assets.kubernetesonrails.com"
+    secrets:
+      "app-secrets":
+        - DATABASE_URL
+        - SECRET_KEY_BASE
+        - GOOGLE_CLOUD_KEYFILE_JSON
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  reserved_address:
+    ipv4: webapp-ipv4
+    ipv6: webapp-ipv6
+  hosts:
+    website: "quixotic-tesla-241816.kubernetesonrails.com"
+    assets: "quixotic-tesla-241816-assets.kubernetesonrails.com"

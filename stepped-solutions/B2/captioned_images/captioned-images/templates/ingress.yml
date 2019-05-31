@@ -1,0 +1,54 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webapp-ingress-ipv4
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "{{ .Values.ingress.reserved_address.ipv4 }}"
+    networking.gke.io/managed-certificates: website-cert,assets-cert
+spec:
+  rules:
+  - host: "{{ .Values.ingress.hosts.website }}"
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: webapp-service
+          servicePort: 80
+  - host: "{{ .Values.ingress.hosts.assets }}"
+    http:
+      paths:
+      - path: /assets/*
+        backend:
+          serviceName: webapp-service
+          servicePort: 81
+      - path: /
+        backend:
+          serviceName: webapp-service
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webapp-ingress-ipv6
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "{{ .Values.ingress.reserved_address.ipv6 }}"
+spec:
+  rules:
+  - host: "{{ .Values.ingress.hosts.website }}"
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: webapp-service
+          servicePort: 80
+  - host: "{{ .Values.ingress.hosts.assets }}"
+    http:
+      paths:
+      - path: /assets/*
+        backend:
+          serviceName: webapp-service
+          servicePort: 81
+      - path: /
+        backend:
+          serviceName: webapp-service
+          servicePort: 80

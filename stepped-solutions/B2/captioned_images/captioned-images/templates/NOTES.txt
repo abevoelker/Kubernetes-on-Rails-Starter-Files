@@ -1,0 +1,1 @@
+Visit in your browser: http://{{ .Values.ingress.hosts.website }}

@@ -1,0 +1,53 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webapp-ingress-ipv4
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: webapp-ipv4
+spec:
+  rules:
+  - host: erudite-tome-241418.kubernetesonrails.com
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: webapp-service
+          servicePort: 80
+  - host: erudite-tome-241418-assets.kubernetesonrails.com
+    http:
+      paths:
+      - path: /assets/*
+        backend:
+          serviceName: webapp-service
+          servicePort: 81
+      - path: /
+        backend:
+          serviceName: webapp-service
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: webapp-ingress-ipv6
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: webapp-ipv6
+spec:
+  rules:
+  - host: erudite-tome-241418.kubernetesonrails.com
+    http:
+      paths:
+      - path: /*
+        backend:
+          serviceName: webapp-service
+          servicePort: 80
+  - host: erudite-tome-241418-assets.kubernetesonrails.com
+    http:
+      paths:
+      - path: /assets/*
+        backend:
+          serviceName: webapp-service
+          servicePort: 81
+      - path: /
+        backend:
+          serviceName: webapp-service
+          servicePort: 80
