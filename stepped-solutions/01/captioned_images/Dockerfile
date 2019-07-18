@@ -31,6 +31,9 @@ RUN set -ex &&\
 # Yarn
   curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - &&\
   echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list &&\
+# Postgres
+  curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - &&\
+  echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list &&\
 # Install su-exec
   cd /tmp &&\
   wget -O su-exec-0.2.tar.gz https://github.com/ncopa/su-exec/archive/v0.2.tar.gz &&\
